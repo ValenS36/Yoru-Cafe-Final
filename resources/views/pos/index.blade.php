@@ -55,7 +55,7 @@
                                 <img :src="menu.image.startsWith('http') ? menu.image : '/storage/' + menu.image" :alt="menu.name" class="w-full h-full object-cover">
                             </template>
                             <template x-if="!menu.image">
-                                <i data-lucide="image" class="w-8 h-8 text-gray-300"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-gray-300"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
                             </template>
                         </div>
                         
@@ -68,18 +68,18 @@
                                 
                                 <template x-if="getItemQuantity(menu.id) === 0">
                                     <button @click="addToCart(menu)" class="bg-[#ffb000] hover:bg-[#e59e00] text-black font-extrabold px-5 py-2.5 rounded-xl text-sm flex items-center shadow-sm transition-colors">
-                                        <i data-lucide="shopping-cart" class="w-4 h-4 mr-2" style="fill: currentColor;"></i> Add
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Tambah
                                     </button>
                                 </template>
 
                                 <template x-if="getItemQuantity(menu.id) > 0">
                                     <div class="bg-gray-100 rounded-xl flex items-center p-1">
                                         <button @click="updateQuantity(menu.id, -1)" class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-600 shadow-sm hover:text-red-500">
-                                            <i data-lucide="minus" class="w-3 h-3"></i>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><path d="M5 12h14"/></svg>
                                         </button>
                                         <span class="font-extrabold text-gray-900 w-8 text-center text-sm" x-text="getItemQuantity(menu.id)"></span>
                                         <button @click="updateQuantity(menu.id, 1)" class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-600 shadow-sm hover:text-green-500">
-                                            <i data-lucide="plus" class="w-3 h-3"></i>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                                         </button>
                                     </div>
                                 </template>
@@ -132,20 +132,20 @@
                                 <img :src="item.image.startsWith('http') ? item.image : '/storage/' + item.image" class="w-full h-full object-cover">
                             </template>
                             <template x-if="!item.image">
-                                <i data-lucide="image" class="w-5 h-5 text-white/30"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white/30"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
                             </template>
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-start">
                                 <h4 class="text-white font-extrabold text-sm truncate pr-2" x-text="item.name"></h4>
-                                <button class="text-white/40 hover:text-white mt-0.5"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                <button class="text-white/40 hover:text-white mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
                             </div>
                             <div class="text-white/80 font-bold text-xs mt-1" x-text="'Rp ' + (item.price/1000) + '.000'"></div>
                         </div>
                         <div class="flex items-center space-x-3 ml-4">
-                            <button @click="updateQuantity(item.id, -1)" class="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-colors"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
+                            <button @click="updateQuantity(item.id, -1)" class="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M5 12h14"/></svg></button>
                             <span class="text-white font-extrabold text-sm w-4 text-center" x-text="item.quantity"></span>
-                            <button @click="updateQuantity(item.id, 1)" class="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-colors"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
+                            <button @click="updateQuantity(item.id, 1)" class="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
                         </div>
                     </div>
                 </template>
@@ -168,19 +168,10 @@
 
         <!-- Bottom half -->
         <div class="p-8 pt-6 shrink-0">
-            <!-- Promo -->
-            <div class="relative mb-6">
-                <input type="text" placeholder="Promo code" class="w-full bg-[#8b1616] border border-[#bd2c2c] text-white placeholder-white/40 rounded-2xl py-3.5 px-4 text-sm font-bold focus:outline-none focus:border-white/50 shadow-inner">
-                <div class="absolute right-2 top-1/2 -translate-y-1/2 bg-[#2d5a27] text-[#a1f396] px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold flex items-center border border-[#3e7a36] shadow-sm">
-                    <i data-lucide="tag" class="w-3 h-3 mr-1.5 opacity-80"></i> YORU10 <i data-lucide="x" class="w-3 h-3 ml-2 opacity-60 hover:opacity-100 cursor-pointer"></i>
-                </div>
-            </div>
-
             <!-- Summary -->
             <div class="space-y-3 mb-6">
                 <div class="flex justify-between text-sm font-bold text-white/70"><span>Subtotal</span><span x-text="formatMoney(subtotal)"></span></div>
                 <div class="flex justify-between text-sm font-bold text-white/70"><span>Tax (10%)</span><span x-text="formatMoney(tax)"></span></div>
-                <div class="flex justify-between text-sm font-bold text-[#a1f396]"><span>Discount</span><span x-text="'- ' + formatMoney(discount)"></span></div>
             </div>
             
             <div class="flex justify-between items-end mb-8 text-white">
@@ -193,6 +184,13 @@
                 <button @click="paymentMethod = 'cash'" :class="{'bg-white text-[#a41c1c] shadow-md': paymentMethod === 'cash', 'bg-[#8b1616] border border-[#bd2c2c] text-white': paymentMethod !== 'cash'}" class="flex-1 font-extrabold py-3.5 rounded-2xl text-sm transition-all">Cash</button>
                 <button @click="paymentMethod = 'qris'" :class="{'bg-white text-[#a41c1c] shadow-md': paymentMethod === 'qris', 'bg-[#8b1616] border border-[#bd2c2c] text-white': paymentMethod !== 'qris'}" class="flex-1 font-extrabold py-3.5 rounded-2xl text-sm transition-all">QRIS</button>
                 <button @click="paymentMethod = 'debit'" :class="{'bg-white text-[#a41c1c] shadow-md': paymentMethod === 'debit', 'bg-[#8b1616] border border-[#bd2c2c] text-white': paymentMethod !== 'debit'}" class="flex-1 font-extrabold py-3.5 rounded-2xl text-sm transition-all">Debit</button>
+            </div>
+
+            <!-- Upload Payment Proof (only for non-cash) -->
+            <div x-show="paymentMethod !== 'cash'" class="mb-6">
+                <label class="block text-xs font-bold text-white/70 mb-2">Unggah Bukti Pembayaran</label>
+                <input type="file" @change="paymentProof = $event.target.files[0]" id="payment_proof_input" accept="image/*,.pdf"
+                       class="w-full text-sm text-white/70 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-white file:text-[#a41c1c] hover:file:bg-gray-100 transition-all cursor-pointer bg-[#8b1616] border border-[#bd2c2c] rounded-2xl shadow-inner p-1">
             </div>
 
             <!-- Confirm Button -->
@@ -219,6 +217,7 @@
             orderType: 'dine_in',
             paymentMethod: 'cash',
             customerName: '',
+            paymentProof: null,
 
             get filteredMenus() {
                 return this.menus.filter(menu => {
@@ -266,13 +265,8 @@
                 return this.subtotal * 0.10; // 10% tax
             },
 
-            get discount() {
-                // Mock discount logic
-                return this.cart.length > 0 ? this.tax : 0; 
-            },
-
             get total() {
-                return this.subtotal + this.tax - this.discount;
+                return this.subtotal + this.tax;
             },
 
             formatMoney(amount) {
@@ -290,20 +284,28 @@
                     return;
                 }
 
+                if(this.paymentMethod !== 'cash' && !this.paymentProof) {
+                    alert('Silakan unggah foto bukti pembayaran terlebih dahulu!');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('customer_name', this.customerName);
+                formData.append('order_type', this.orderType);
+                formData.append('payment_method', this.paymentMethod);
+                formData.append('cart', JSON.stringify(this.cart));
+                if (this.paymentProof) {
+                    formData.append('payment_proof', this.paymentProof);
+                }
+
                 try {
                     const response = await fetch('{{ route("pos.checkout") }}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({
-                            customer_name: this.customerName,
-                            order_type: this.orderType,
-                            payment_method: this.paymentMethod,
-                            cart: this.cart
-                        })
+                        body: formData
                     });
 
                     const data = await response.json();
@@ -313,6 +315,10 @@
                         // Reset order
                         this.cart = [];
                         this.customerName = '';
+                        this.paymentMethod = 'cash';
+                        this.paymentProof = null;
+                        const fileInput = document.getElementById('payment_proof_input');
+                        if(fileInput) fileInput.value = '';
                     } else {
                         alert('Gagal memproses pesanan: ' + data.message);
                     }

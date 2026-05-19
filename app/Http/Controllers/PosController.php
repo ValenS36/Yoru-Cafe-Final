@@ -24,39 +24,40 @@ class PosController extends Controller
 
     public function checkout(Request $request)
     {
+        $cart = json_decode($request->cart, true);
+        if (!$cart || !is_array($cart) || count($cart) < 1) {
+            return response()->json(['success' => false, 'message' => 'Keranjang tidak valid'], 422);
+        }
+
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'order_type' => 'required|string',
             'payment_method' => 'required|string',
-            'cart' => 'required|array|min:1',
-            'cart.*.id' => 'required|exists:menus,id',
-            'cart.*.quantity' => 'required|integer|min:1',
-            'cart.*.price' => 'required|numeric',
+            'payment_proof' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
 
         try {
-            return DB::transaction(function () use ($request) {
+            return DB::transaction(function () use ($request, $cart) {
                 $subtotal = 0;
-                foreach ($request->cart as $item) {
+                foreach ($cart as $item) {
                     $subtotal += $item['price'] * $item['quantity'];
                 }
 
                 $tax = $subtotal * 0.10;
-                $discount = $tax; // Mock discount logic from frontend
-                $total = $subtotal + $tax - $discount;
+                $total = $subtotal + $tax;
 
                 $order = Order::create([
                     'user_id' => Auth::id(),
                     'order_number' => 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(4)),
                     'customer_name' => $request->customer_name,
                     'total' => $total,
-                    'status' => 'completed',
+                    'status' => 'pending',
                     'payment_method' => $request->payment_method,
                     'payment_status' => 'paid',
                     'notes' => $request->order_type,
                 ]);
 
-                foreach ($request->cart as $item) {
+                foreach ($cart as $item) {
                     OrderItem::create([
                         'order_id' => $order->id,
                         'menu_id' => $item['id'],
@@ -66,11 +67,17 @@ class PosController extends Controller
                     ]);
                 }
 
+                $proofPath = null;
+                if ($request->hasFile('payment_proof')) {
+                    $proofPath = $request->file('payment_proof')->store('payments', 'public');
+                }
+
                 Payment::create([
                     'order_id' => $order->id,
                     'method' => $request->payment_method,
                     'amount' => $total,
                     'change' => 0,
+                    'payment_proof' => $proofPath,
                 ]);
 
                 return response()->json([

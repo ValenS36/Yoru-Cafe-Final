@@ -63,7 +63,7 @@
             <div class="relative z-10">
                 <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Total Pendapatan</h3>
                 <div class="text-3xl font-extrabold mb-1 tracking-tight">Rp {{ number_format($totalRevenue / 1000, 1, ',', '.') }}rb</div>
-                <p class="text-[11px] text-white/70 font-medium">Semua transaksi lunas</p>
+                <p class="text-[11px] text-white/70 font-medium">Transaksi lunas hari ini</p>
             </div>
         </div>
 
@@ -144,7 +144,7 @@
                     <h3 class="font-bold text-gray-900">Menu Terlaris</h3>
                     <p class="text-xs text-gray-500 font-medium">Top 5 item bulan ini</p>
                 </div>
-                <a href="#" class="text-xs font-bold text-red-500 hover:text-red-700 flex items-center">
+                <a href="{{ route('reports') }}" class="text-xs font-bold text-red-500 hover:text-red-700 flex items-center">
                     Lihat semua <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i>
                 </a>
             </div>
@@ -185,7 +185,7 @@
                     <h3 class="font-bold text-gray-900">Aktivitas Terbaru</h3>
                     <p class="text-xs text-gray-500 font-medium">5 pesanan terakhir masuk</p>
                 </div>
-                <a href="#" class="text-xs font-bold text-red-500 hover:text-red-700 flex items-center">
+                <a href="{{ route('orders') }}" class="text-xs font-bold text-red-500 hover:text-red-700 flex items-center">
                     Lihat semua <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i>
                 </a>
             </div>

@@ -24,6 +24,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders');
     Route::get('/orders/receipt', [OrderController::class, 'receipt'])->name('orders.receipt');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
     Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');

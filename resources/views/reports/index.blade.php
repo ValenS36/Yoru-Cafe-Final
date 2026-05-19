@@ -19,15 +19,58 @@
 
     <!-- Right side -->
     <div class="flex items-center space-x-4">
-        <!-- Month Filter -->
-        <form action="{{ route('reports') }}" method="GET" id="monthFilterForm" class="flex items-center">
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <!-- Filter -->
+        <form action="{{ route('reports') }}" method="GET" id="filterForm" class="flex items-center space-x-2" 
+              x-data="{ filterType: '{{ $filterType }}', initType: '{{ $filterType }}' }"
+              x-init="$watch('filterType', val => { if(val !== 'custom' && val !== initType) { $nextTick(() => { document.getElementById('filterForm').submit(); }); } })">
+            <select name="filter_type" x-model="filterType" class="border-transparent bg-white rounded-xl py-2.5 pl-3 pr-8 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary shadow-sm">
+                <option value="daily">Harian</option>
+                <option value="weekly">Mingguan</option>
+                <option value="monthly">Bulanan</option>
+                <option value="yearly">Tahunan</option>
+                <option value="custom">Custom (Rentang)</option>
+            </select>
+            
+            <div class="relative flex items-center space-x-2">
+                <div x-show="filterType !== 'custom'" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                     <i data-lucide="calendar" class="h-4 w-4 text-gray-400"></i>
                 </div>
-                <input type="month" name="month" value="{{ $month }}" onchange="document.getElementById('monthFilterForm').submit()"
-                       class="block w-48 pl-10 pr-3 py-2.5 border-transparent bg-white rounded-xl leading-5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:text-sm">
+                
+                <!-- Daily -->
+                <input x-show="filterType === 'daily'" type="date" name="filter_value" value="{{ $filterType === 'daily' ? $filterValue : date('Y-m-d') }}" onchange="document.getElementById('filterForm').submit()"
+                       :disabled="filterType !== 'daily'" class="block w-40 pl-10 pr-3 py-2.5 border-transparent bg-white rounded-xl leading-5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:text-sm">
+                
+                <!-- Weekly -->
+                <input x-show="filterType === 'weekly'" type="week" name="filter_value" value="{{ $filterType === 'weekly' ? $filterValue : date('Y-\WW') }}" onchange="document.getElementById('filterForm').submit()"
+                       :disabled="filterType !== 'weekly'" class="block w-40 pl-10 pr-3 py-2.5 border-transparent bg-white rounded-xl leading-5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:text-sm">
+                
+                <!-- Monthly -->
+                <input x-show="filterType === 'monthly'" type="month" name="filter_value" value="{{ $filterType === 'monthly' ? $filterValue : date('Y-m') }}" onchange="document.getElementById('filterForm').submit()"
+                       :disabled="filterType !== 'monthly'" class="block w-40 pl-10 pr-3 py-2.5 border-transparent bg-white rounded-xl leading-5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:text-sm">
+                
+                <!-- Yearly -->
+                <select x-show="filterType === 'yearly'" name="filter_value" onchange="document.getElementById('filterForm').submit()"
+                        :disabled="filterType !== 'yearly'" class="block w-32 pl-10 pr-3 py-2.5 border-transparent bg-white rounded-xl leading-5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:text-sm">
+                    @for($y = date('Y'); $y >= date('Y') - 5; $y--)
+                        <option value="{{ $y }}" {{ ($filterType === 'yearly' && $filterValue == $y) ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+
+                <!-- Custom -->
+                <div x-show="filterType === 'custom'" class="flex items-center space-x-2">
+                    <input type="date" name="start_date" value="{{ $customStartDate }}" :disabled="filterType !== 'custom'" class="block w-36 px-3 py-2.5 border-transparent bg-white rounded-xl leading-5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:text-sm">
+                    <span class="text-gray-500 font-bold">-</span>
+                    <input type="date" name="end_date" value="{{ $customEndDate }}" :disabled="filterType !== 'custom'" class="block w-36 px-3 py-2.5 border-transparent bg-white rounded-xl leading-5 text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-primary shadow-sm sm:text-sm">
+                    <button type="submit" class="bg-[#ea580c] hover:bg-orange-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all">Terapkan</button>
+                </div>
             </div>
+            
+            <select name="category_id" onchange="document.getElementById('filterForm').submit()" class="border-transparent bg-white rounded-xl py-2.5 pl-3 pr-8 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary shadow-sm">
+                <option value="">Semua Kategori</option>
+                @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                @endforeach
+            </select>
         </form>
 
         <!-- User Profile Pic -->
@@ -43,9 +86,8 @@
     
     <!-- Export Action -->
     <div class="flex justify-end mb-6">
-        <a href="{{ route('reports.export', ['month' => $month]) }}" class="bg-[#1c1c1e] hover:bg-black text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center shadow-sm transition-all transform hover:scale-[1.02]">
-            <i data-lucide="file-down" class="w-4 h-4 mr-2"></i> Export Laporan (Excel/CSV)
-        </a>
+        <a href="{{ route('reports.export', ['filter_type' => $filterType, 'filter_value' => $filterValue, 'category_id' => $categoryId, 'start_date' => $customStartDate, 'end_date' => $customEndDate]) }}" class="bg-[#1c1c1e] hover:bg-black text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center shadow-sm transition-all transform hover:scale-[1.02]">
+            <i data-lucide="file-down" class="w-4 h-4 mr-2"></i> Export Laporan</a>
     </div>
 
     <!-- Stats Cards -->
@@ -58,18 +100,23 @@
             <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Total Pendapatan</p>
             <div class="text-2xl font-extrabold text-gray-900 tracking-tight">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</div>
             <p class="text-[10px] text-green-600 font-bold mt-2 flex items-center">
-                <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i> Bulan {{ \Carbon\Carbon::parse($month)->translatedFormat('F') }}
+                <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i> 
+                @if($filterType === 'daily') Hari {{ \Carbon\Carbon::parse($filterValue)->translatedFormat('d M Y') }}
+                @elseif($filterType === 'weekly' || $filterType === 'custom') {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') }}
+                @elseif($filterType === 'yearly') Tahun {{ $filterValue }}
+                @else Bulan {{ \Carbon\Carbon::parse($filterValue)->translatedFormat('F Y') }}
+                @endif
             </p>
         </div>
 
         <!-- Total Orders -->
         <div class="bg-white rounded-[24px] p-6 shadow-sm border border-gray-100">
             <div class="w-12 h-12 rounded-[14px] bg-blue-50 flex items-center justify-center text-blue-500 mb-4">
-                <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                <i data-lucide="{{ $categoryId ? 'shopping-bag' : 'shopping-cart' }}" class="w-6 h-6"></i>
             </div>
-            <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Total Pesanan</p>
+            <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">{{ $categoryId ? 'Total Item Terjual' : 'Total Pesanan' }}</p>
             <div class="text-2xl font-extrabold text-gray-900 tracking-tight">{{ $stats['total_orders'] }}</div>
-            <p class="text-[10px] text-gray-400 font-bold mt-2">Termasuk pending & batal</p>
+            <p class="text-[10px] text-gray-400 font-bold mt-2">{{ $categoryId ? 'Kuantitas pesanan' : 'Termasuk pending & batal' }}</p>
         </div>
 
         <!-- Average Order -->
@@ -77,9 +124,9 @@
             <div class="w-12 h-12 rounded-[14px] bg-purple-50 flex items-center justify-center text-purple-500 mb-4">
                 <i data-lucide="receipt" class="w-6 h-6"></i>
             </div>
-            <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Rata-rata Pesanan</p>
+            <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">{{ $categoryId ? 'Rata-rata Harga Item' : 'Rata-rata Pesanan' }}</p>
             <div class="text-2xl font-extrabold text-gray-900 tracking-tight">Rp {{ number_format($stats['average_order'], 0, ',', '.') }}</div>
-            <p class="text-[10px] text-gray-400 font-bold mt-2">Per transaksi selesai</p>
+            <p class="text-[10px] text-gray-400 font-bold mt-2">{{ $categoryId ? 'Pendapatan per item' : 'Per transaksi selesai' }}</p>
         </div>
 
         <!-- Completed Orders -->
@@ -98,8 +145,14 @@
         <div class="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-gray-100">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h3 class="text-lg font-extrabold text-gray-900">Tren Penjualan Harian</h3>
-                    <p class="text-xs font-medium text-gray-500">Performa harian di bulan {{ \Carbon\Carbon::parse($month)->translatedFormat('F Y') }}</p>
+                    <h3 class="text-lg font-extrabold text-gray-900">Tren Penjualan</h3>
+                    <p class="text-xs font-medium text-gray-500">Performa pada 
+                        @if($filterType === 'daily') {{ \Carbon\Carbon::parse($filterValue)->translatedFormat('d F Y') }}
+                        @elseif($filterType === 'weekly' || $filterType === 'custom') {{ \Carbon\Carbon::parse($startDate)->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($endDate)->translatedFormat('d M Y') }}
+                        @elseif($filterType === 'yearly') {{ $filterValue }}
+                        @else {{ \Carbon\Carbon::parse($filterValue)->translatedFormat('F Y') }}
+                        @endif
+                    </p>
                 </div>
             </div>
             <div class="h-[350px] w-full">
@@ -150,10 +203,20 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('salesTrendChart').getContext('2d');
         
-        const data = @json($dailySales);
+        const data = @json($trendSales);
+        const filterType = '{{ $filterType }}';
+        
         const labels = data.map(item => {
-            const date = new Date(item.date);
-            return date.getDate();
+            if (filterType === 'daily') {
+                return item.date_group; 
+            } else if (filterType === 'yearly') {
+                const parts = item.date_group.split('-');
+                const date = new Date(parts[0], parts[1] - 1, 1);
+                return date.toLocaleString('id-ID', { month: 'short' });
+            } else {
+                const date = new Date(item.date_group);
+                return date.getDate() + ' ' + date.toLocaleString('id-ID', { month: 'short' });
+            }
         });
         const revenues = data.map(item => item.revenue);
 

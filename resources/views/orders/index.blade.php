@@ -40,16 +40,6 @@
             </div>
         </div>
 
-        <!-- Total Card -->
-        <div class="flex items-center bg-white px-5 py-3 rounded-[20px] shadow-sm border border-gray-100">
-            <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500 mr-3">
-                <i data-lucide="receipt" class="w-5 h-5"></i>
-            </div>
-            <div>
-                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total Hari Ini</p>
-                <p class="text-xl font-extrabold text-gray-900 leading-none mt-0.5">Rp {{ number_format($stats['total_today'] / 1000, 1, ',', '.') }}rb</p>
-            </div>
-        </div>
     </div>
 </header>
 @endsection
@@ -100,12 +90,6 @@
                 </div>
             </div>
 
-            <!-- Export Button -->
-            <button type="button" 
-                onclick="const id = prompt('Masukkan Order ID (contoh: #3AOH):'); if(id) window.open('{{ route('orders.receipt') }}?order_id=' + encodeURIComponent(id), '_blank');"
-                class="bg-[#1c1c1e] text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center hover:bg-black transition-colors shadow-sm">
-                <i data-lucide="file-down" class="w-4 h-4 mr-2"></i> Export
-            </button>
         </div>
     </form>
 
@@ -121,7 +105,8 @@
                         <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-gray-400 uppercase tracking-widest bg-white">Pembayaran</th>
                         <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-gray-400 uppercase tracking-widest bg-white">Total Harga</th>
                         <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-gray-400 uppercase tracking-widest bg-white">Status</th>
-                        <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-gray-400 uppercase tracking-widest bg-white rounded-tr-[24px]">Tanggal & Waktu</th>
+                        <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-gray-400 uppercase tracking-widest bg-white">Tanggal & Waktu</th>
+                        <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-gray-400 uppercase tracking-widest bg-white rounded-tr-[24px]">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-50">
@@ -176,10 +161,15 @@
                             <div class="text-gray-900 font-bold">{{ $order->created_at->format('d M Y') }}</div>
                             <div>{{ $order->created_at->format('H:i') }}</div>
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="{{ route('orders.show', $order) }}" class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors flex items-center inline-flex font-bold">
+                                <i data-lucide="eye" class="w-4 h-4 mr-1.5"></i> Detail
+                            </a>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-10 text-center text-gray-400 font-medium">Belum ada data pesanan</td>
+                        <td colspan="8" class="px-6 py-10 text-center text-gray-400 font-medium">Belum ada data pesanan</td>
                     </tr>
                     @endforelse
                 </tbody>

@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalRevenue = Order::where('payment_status', 'paid')->sum('total');
+        $totalRevenue = Order::where('payment_status', 'paid')->whereDate('created_at', today())->sum('total');
         $ordersToday = Order::whereDate('created_at', today())->count();
         $pendingOrders = Order::where('status', 'pending')->count();
         

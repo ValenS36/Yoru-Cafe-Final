@@ -18,7 +18,7 @@
                 <div class="w-6 h-6 text-orange-500">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2 0v20c5.07-.5 9-4.79 9-10s-3.93-9.5-9-10zm-1 2.06c-3.95.49-7 3.85-7 8.94s3.05 8.45 7 8.94V4.06zm2 0v17.88c3.95-.49 7-3.85 7-8.94s-3.05-8.45-7-8.94z"/></svg>
                 </div>
-                <span class="text-xl font-bold tracking-tight">YourCafe POS</span>
+                <span class="text-xl font-bold tracking-tight">YoruCafe POS</span>
             </div>
             <h1 class="text-5xl font-extrabold mb-4 leading-tight tracking-tight">The Digital<br>Maitre d'</h1>
             <p class="text-base text-gray-300 font-normal">Precision logistics meet culinary passion. Sign in to manage orders, staff, and your daily flow.</p>
@@ -34,6 +34,13 @@
                 <h2 class="text-[28px] font-bold text-gray-900 mb-1 tracking-tight">Welcome Back</h2>
                 <p class="text-sm text-gray-500">Enter your credentials to access the system.</p>
             </div>
+
+            @if (session('success'))
+                <div class="mb-6 p-4 rounded-lg bg-green-50 text-green-700 text-sm font-semibold flex items-center">
+                    <i data-lucide="check-circle" class="w-5 h-5 mr-2 text-green-500"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
 
             @if ($errors->any())
                 <div class="mb-6 p-4 rounded-lg bg-red-50 text-red-700 text-sm">
@@ -55,7 +62,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <i data-lucide="mail" class="h-4 w-4 text-gray-400"></i>
                         </div>
-                        <input id="email" name="email" type="email" required value="{{ old('email') }}" placeholder="name@yourcafe.com"
+                        <input id="email" name="email" type="email" required value="{{ old('email') }}" placeholder="name@yorucafe.com"
                                class="block w-full rounded-lg bg-[#eef0ff] border-0 py-3 pl-10 pr-4 text-gray-900 focus:ring-2 focus:ring-primary sm:text-sm transition-colors placeholder:text-gray-400 font-medium">
                     </div>
                 </div>
@@ -66,42 +73,20 @@
                         <label for="password" class="block text-xs font-semibold text-gray-600 uppercase tracking-wide">Password</label>
                         <a href="#" class="text-xs font-semibold text-[#ea580c] hover:text-orange-500">Forgot Password?</a>
                     </div>
-                    <div class="relative">
+                    <div class="relative" x-data="{ showPassword: false }">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <i data-lucide="lock" class="h-4 w-4 text-gray-400"></i>
                         </div>
-                        <input id="password" name="password" type="password" required placeholder="••••••••"
+                        <input id="password" name="password" :type="showPassword ? 'text' : 'password'" required placeholder="••••••••"
                                class="block w-full rounded-lg bg-[#eef0ff] border-0 py-3 pl-10 pr-10 text-gray-900 focus:ring-2 focus:ring-primary sm:text-sm transition-colors placeholder:text-gray-400 font-medium tracking-widest">
-                        <button type="button" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
-                            <i data-lucide="eye-off" class="h-4 w-4"></i>
+                        <button type="button" @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
+                            <i x-show="!showPassword" data-lucide="eye-off" class="h-4 w-4"></i>
+                            <i x-show="showPassword" data-lucide="eye" class="h-4 w-4" style="display: none;"></i>
                         </button>
                     </div>
                 </div>
                 
-                <!-- Role Selection -->
-                <div class="pt-2">
-                    <label class="block text-xs font-semibold text-gray-600 mb-2.5 uppercase tracking-wide">Select Role</label>
-                    <div class="grid grid-cols-2 gap-3" x-data="{ selectedRole: 'admin' }">
-                        <!-- Admin Role -->
-                        <button type="button" @click="selectedRole = 'admin'" 
-                                :class="selectedRole === 'admin' ? 'bg-[#f4f2ff] border-transparent text-gray-900 ring-2 ring-[#ea580c]' : 'bg-white border-gray-200 text-gray-600 border-2 hover:bg-gray-50'"
-                                class="flex flex-col items-center justify-center p-3 rounded-lg transition-all relative">
-                            <i data-lucide="shield" class="h-5 w-5 mb-1.5" :class="selectedRole === 'admin' ? 'text-[#ea580c]' : 'text-gray-500'"></i>
-                            <span class="text-xs font-semibold">Manager / Admin</span>
-                        </button>
-                        
-                        <!-- Cashier Role -->
-                        <button type="button" @click="selectedRole = 'cashier'" 
-                                :class="selectedRole === 'cashier' ? 'bg-[#f4f2ff] border-transparent text-gray-900 ring-2 ring-[#ea580c]' : 'bg-white border-[#d1d5db] border-2 text-gray-800 hover:bg-gray-50'"
-                                class="flex flex-col items-center justify-center p-3 rounded-lg transition-all relative">
-                            <i data-lucide="calculator" class="h-5 w-5 mb-1.5" :class="selectedRole === 'cashier' ? 'text-[#ea580c]' : 'text-gray-500'"></i>
-                            <span class="text-xs font-semibold">Cashier</span>
-                        </button>
-                        
-                        <!-- Hidden input to pass role -->
-                        <input type="hidden" name="role" x-model="selectedRole">
-                    </div>
-                </div>
+
 
                 <div class="pt-4">
                     <button type="submit" 

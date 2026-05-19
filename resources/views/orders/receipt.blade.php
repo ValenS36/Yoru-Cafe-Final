@@ -138,9 +138,6 @@
             <div style="font-size: 11px; font-weight: normal; margin-top: 5px;">
                 <span>Metode Pembayaran:</span> <span>{{ strtoupper($order->payment_method) }}</span>
             </div>
-            <div style="font-size: 11px; font-weight: normal;">
-                <span>Status:</span> <span>{{ strtoupper($order->status) }}</span>
-            </div>
         </div>
 
         <div class="footer">

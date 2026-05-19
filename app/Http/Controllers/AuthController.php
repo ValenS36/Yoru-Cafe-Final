@@ -17,7 +17,6 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
-            'role' => ['required', 'in:admin,cashier'],
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
@@ -32,7 +31,7 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Email, password, atau role yang dipilih tidak sesuai.',
+            'email' => 'Email atau password yang Anda masukkan tidak sesuai.',
         ])->onlyInput('email');
     }
 
@@ -47,24 +46,16 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:admin,cashier'],
         ]);
 
         $user = \App\Models\User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
-            'role' => $request->role,
+            'role' => 'cashier',
         ]);
 
-        Auth::login($user);
-
-        // Redirect based on role
-        if ($user->role === 'admin') {
-            return redirect()->route('dashboard');
-        } else {
-            return redirect()->route('pos');
-        }
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }
 
     public function logout(Request $request)

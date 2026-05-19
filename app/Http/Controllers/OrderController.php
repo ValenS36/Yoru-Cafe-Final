@@ -38,6 +38,12 @@ class OrderController extends Controller
         return view('orders.index', compact('orders', 'stats'));
     }
 
+    public function show(Order $order)
+    {
+        $order->load(['items.menu', 'user']);
+        return view('orders.show', compact('order'));
+    }
+
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
