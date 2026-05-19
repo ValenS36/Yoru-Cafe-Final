@@ -69,5 +69,98 @@ class DatabaseSeeder extends Seeder
         foreach ($menus as $menu) {
             Menu::create($menu);
         }
+
+        // 4. Seed 10 Dummy Transactions across 3 days (today, yesterday, and the day before yesterday)
+        $cashier = User::where('role', 'cashier')->first() ?? User::first();
+        $allMenus = Menu::all();
+        $customers = ['Budi', 'Siti', 'Andi', 'Rian', 'Dewi', 'Eko', 'Lina', 'Joni', 'Rina', 'Tono'];
+        $paymentMethods = ['cash', 'debit', 'qris'];
+
+        $transactionsDistribution = [
+            2 => 3, // 2 days ago: 3 transactions
+            1 => 3, // 1 day ago: 3 transactions
+            0 => 4, // today: 4 transactions
+        ];
+
+        $orderIndex = 1;
+
+        foreach ($transactionsDistribution as $daysAgo => $count) {
+            for ($i = 0; $i < $count; $i++) {
+                $date = now()->subDays($daysAgo)->setTime(rand(9, 21), rand(0, 59), rand(0, 59));
+                
+                $paymentMethod = $paymentMethods[array_rand($paymentMethods)];
+                $customerName = $customers[($orderIndex - 1) % count($customers)];
+                
+                // Generate a unique order number
+                $orderNumber = 'ORD-' . $date->format('Ymd') . '-' . str_pad($orderIndex, 4, '0', STR_PAD_LEFT);
+                $orderIndex++;
+
+                // Create the order first with temporary total 0
+                $order = \App\Models\Order::create([
+                    'user_id' => $cashier->id,
+                    'order_number' => $orderNumber,
+                    'customer_name' => $customerName,
+                    'total' => 0,
+                    'status' => 'completed',
+                    'payment_method' => $paymentMethod,
+                    'payment_status' => 'paid',
+                    'notes' => 'Transaksi dummy untuk testing laporan',
+                    'created_at' => $date,
+                    'updated_at' => $date,
+                ]);
+
+                // Select 1 to 3 random menus
+                $selectedMenus = $allMenus->random(rand(1, 3));
+                $orderTotal = 0;
+
+                foreach ($selectedMenus as $menu) {
+                    $qty = rand(1, 2);
+                    $price = $menu->price;
+                    $subtotal = $qty * $price;
+                    $orderTotal += $subtotal;
+
+                    \App\Models\OrderItem::create([
+                        'order_id' => $order->id,
+                        'menu_id' => $menu->id,
+                        'quantity' => $qty,
+                        'price' => $price,
+                        'subtotal' => $subtotal,
+                        'created_at' => $date,
+                        'updated_at' => $date,
+                    ]);
+                }
+
+                // Update order's total
+                $order->update(['total' => $orderTotal]);
+
+                // Create payment
+                $amount = $orderTotal;
+                $change = 0;
+                if ($paymentMethod === 'cash') {
+                    $bills = [5000, 10000, 20000, 50000, 100000];
+                    foreach ($bills as $bill) {
+                        if ($bill >= $orderTotal) {
+                            $amount = $bill;
+                            break;
+                        }
+                    }
+                    if ($amount < $orderTotal) {
+                        $amount = ceil($orderTotal / 50000) * 50000;
+                    }
+                    $change = $amount - $orderTotal;
+                }
+
+                \App\Models\Payment::create([
+                    'order_id' => $order->id,
+                    'method' => $paymentMethod,
+                    'amount' => $amount,
+                    'change' => $change,
+                    'reference_number' => $paymentMethod !== 'cash' ? 'REF-' . strtoupper(Str::random(10)) : null,
+                    'created_at' => $date,
+                    'updated_at' => $date,
+                ]);
+            }
+        }
     }
 }
+
